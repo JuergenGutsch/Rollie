@@ -1,0 +1,124 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta name="viewport" content="width=device-width,user-scalable=no" />
+    <meta charset="utf-8" />
+    <title>Rollie</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="jquery-2.2.1.min.js"></script>
+</head>
+<body>
+    <table>
+        <tr>
+            <td class="left"><button id="fl" type="button">Vor</button></td>
+            <td class="center">&nbsp;</td>
+            <td class="right"><button id="fr" type="button">Vor</button></td>
+        </tr>
+        <tr>
+            <td class="left"><button id="hl" type="button">Zurück</button></td>
+            <td class="center"><button id="stop" type="button">Stop</button></td>
+            <td class="right"><button id="hr" type="button">Zurück</button></td>
+        </tr>
+    </table>
+    <script>
+        $(function () {
+            function touchHandler(event) {
+                var touches = event.changedTouches,
+                    first = touches[0],
+                    type = '';
+                switch (event.type) {
+                    case 'touchstart': type = 'mousedown'; break;
+                    case 'touchmove': type = 'mousemove'; break;
+                    case 'touchend': type = 'mouseup'; break;
+                    default: return;
+                }
+
+                // initMouseEvent(type, canBubble, cancelable, view, clickCount,
+                //                screenX, screenY, clientX, clientY, ctrlKey,
+                //                altKey, shiftKey, metaKey, button, relatedTarget);
+
+                var simulatedEvent = document.createEvent('MouseEvent');
+                simulatedEvent.initMouseEvent(type, true, true, window, 1,
+                                              first.screenX, first.screenY,
+                                              first.clientX, first.clientY, false,
+                                              false, false, false, 0/*left*/, null);
+
+                first.target.dispatchEvent(simulatedEvent);
+                event.preventDefault();
+            }
+
+            function init() {
+                document.addEventListener('touchstart', touchHandler, true);
+                document.addEventListener('touchmove', touchHandler, true);
+                document.addEventListener('touchend', touchHandler, true);
+                document.addEventListener('touchcancel', touchHandler, true);
+            }
+
+            document.oncontextmenu = function (e) {
+                stopEvent(e);
+                return false;
+            }
+            function stopEvent(event) {
+                if (event.preventDefault != undefined)
+                    event.preventDefault();
+                if (event.stopPropagation != undefined)
+                    event.stopPropagation();
+            }
+
+            init();
+            var leftForward = $('#fl');
+            var rightForward = $('#fr');
+            var leftBackward = $('#hl');
+            var rightBackward = $('#hr');
+
+            var stop = $('#stop');
+
+            var send = function (wheel, direction) {
+                var now = Date.now();
+
+                var url = '/api/rollie/' + wheel + '/' + direction;
+                url += '/' + now;
+
+                console.log('do: ' + url);
+                $.get(url, function () {
+                    console.log('done: ' + url);
+                });
+            };
+
+            leftForward.bind('mousedown', function () {
+                send('left', 'forward');
+            });
+            leftForward.bind('mouseup', function () {
+                send('left', 'off');
+            });
+
+            rightForward.bind('mousedown', function () {
+                send('right', 'forward');
+            });
+            rightForward.bind('mouseup', function () {
+                send('right', 'off');
+            });
+
+            leftBackward.bind('mousedown', function () {
+                send('left', 'backward');
+            });
+            leftBackward.bind('mouseup', function () {
+                send('left', 'off');
+            });
+
+            rightBackward.bind('mousedown', function () {
+                send('right', 'backward');
+            });
+            rightBackward.bind('mouseup', function () {
+                send('right', 'off');
+            });
+
+            stop.bind('mouseup', function () {
+                send('right', 'off');
+                send('left', 'off');
+            });
+        })
+    </script>
+</body>
+</html>

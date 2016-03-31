@@ -1,0 +1,45 @@
+﻿
+button {
+    padding: 30px;
+    margin: 15px;
+    font-size: 24px;
+    font-weight: bold;
+    width: 75px;
+    -webkit-box-sizing: content-box;
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
+    border: 1px solid black;
+    -ms-border-radius: 100px;
+    border-radius: 100px;
+}
+
+    button#vl,
+    button#vr {
+        background-color: greenyellow;
+    }
+
+    button#hl,
+    button#hr {
+        background-color: aqua;
+    }
+
+    button#stop {
+        background-color: orangered;
+    }
+
+table {
+    margin-top: 20px;
+    width: 100%;
+}
+
+    table td.left {
+        text-align: left;
+    }
+
+    table td.center {
+        text-align: center;
+    }
+
+    table td.right {
+        text-align: right;
+    }
